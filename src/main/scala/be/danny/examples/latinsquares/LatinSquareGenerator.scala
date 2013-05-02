@@ -1,32 +1,21 @@
 package be.danny.examples.latinsquares
 
-class LatinSquareGenerator {
+import be.danny.generator.MatrixGenerator
+import be.danny.generator.MatrixRestrictionHelp
 
-  def generateLatinSquares(size: Int): Unit = {
-    val start = new LatinSquare(size);
-    val count = generateLatinSquares(start)
-    
-    println("Generated " + count + " latin squares")
-  }
-  
-  private def generateLatinSquares(parent: LatinSquare): Int = {
-    if (parent.isComplete) {
-      println(parent)
-      println
-      1
-    } else {
-      val counts = for (child <- parent.children) yield(generateLatinSquares(child))
-      counts.foldLeft(0)((sum, y) => sum + y)
-    }
-  }
-  
-}
-
-object LatinSquareGenerator {
+object LatinSquareGenerator extends MatrixRestrictionHelp[Int] {
   
   def main(args: Array[String]) = {
-    def generator = new LatinSquareGenerator()    
-    generator.generateLatinSquares(5);
+    val n = 4;
+    
+    def unique = {x: Vector[Int] => x.toSet.size == x.size}
+    
+    val generator = MatrixGenerator(elements = 1 to n)
+    	.addRestriction(rowRestriction(unique)(_))
+    	.addRestriction(columnRestriction(unique)(_))
+    	
+    generator.generate(n).foreach { x =>
+      println(x + "\n")
+    }
   }
-  
 }
